@@ -11,5 +11,5 @@ import (
 func main() {
 	router := gin.Default()
 	routes.RouteAPI(router, context.Background(), config.NewConnection())
-	router.Run("localhost:9000")
+	router.Run("localhost:4000")
 }

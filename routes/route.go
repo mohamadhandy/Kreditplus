@@ -14,4 +14,5 @@ func RouteAPI(g *gin.Engine, parentCtx context.Context, db *gorm.DB) {
 	konsumen := handlers.InitVersionOneKonsumenHandler(repository)
 
 	g.POST("/api/users", konsumen.CreateUser)
+	g.POST("/api/upload-image", konsumen.UploadImageKonsumen)
 }

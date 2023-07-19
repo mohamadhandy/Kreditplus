@@ -18,6 +18,7 @@ func NewConnection() *gorm.DB {
 	dbName := os.Getenv("DB_NAME")
 
 	dbURL := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable", dbUser, dbPassword, dbAddress, dbPort, dbName)
+	fmt.Println(dbURL)
 
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 	if err != nil {

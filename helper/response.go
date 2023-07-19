@@ -5,3 +5,8 @@ type Response struct {
 	Message    string      `json:"message"`
 	Data       interface{} `json:"data"`
 }
+
+type ImageURL struct {
+	FotoKTP    string `json:"foto_ktp"`
+	FotoSelfie string `json:"foto_selfie"`
+}
