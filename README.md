@@ -19,54 +19,54 @@ Berikut merupakan gambar dari general architecture untuk technical test Kredit P
 
 Dengan memisahkan `API upload` dan `API create user` tujuannya adalah `separation of concern` sehingga memudahkan developer mengembangkan masing-masing API secara scalable.
 ## Gambaran Umum ERD
-![ERD](https://firebasestorage.googleapis.com/v0/b/crwn-db-6edbc.appspot.com/o/KP%20(1).png?alt=media&token=001ae373-0e13-47eb-93ed-39389e5cf5a9)
+![ERD](https://firebasestorage.googleapis.com/v0/b/crwn-db-6edbc.appspot.com/o/KP%20(2).png?alt=media&token=8fabdf22-0d51-4cb0-a087-71e46aa45224)
 
 ### Table Konsumen
 Tabel "Konsumen" menyimpan informasi tentang konsumen yang terdaftar dalam sistem multifinance.
 
 **Table Konsumen**
-- `ID_Konsumen` (serial, primary key): ID unik untuk setiap konsumen.
-- `NIK` (varchar(20)): Nomor Induk Kependudukan (NIK) konsumen.
-- `Full_Name` (varchar(255)): Nama lengkap konsumen.
-- `Legal_Name` (varchar(255)): Nama lengkap sesuai dokumen resmi konsumen.
-- `Gaji` (numeric(10, 2)): Jumlah gaji konsumen.
-- `Tempat_Lahir` (varchar(255)): Tempat lahir konsumen.
-- `Tanggal_Lahir` (date): Tanggal lahir konsumen.
-- `Foto_KTP` (varchar(255)): URL atau path untuk foto KTP konsumen.
-- `Foto_Selfie` (varchar(255)): URL atau path untuk foto selfie konsumen.
+- `id_konsumen` (serial, primary key): ID unik untuk setiap konsumen.
+- `nik` (varchar(20)): Nomor Induk Kependudukan (NIK) konsumen.
+- `full_name` (varchar(255)): Nama lengkap konsumen.
+- `legal_name` (varchar(255)): Nama lengkap sesuai dokumen resmi konsumen.
+- `gaji` (numeric(10, 2)): Jumlah gaji konsumen.
+- `tempat_lahir` (varchar(255)): Tempat lahir konsumen.
+- `tanggal_lahir` (date): Tanggal lahir konsumen.
+- `foto_ktp` (varchar(255)): URL atau path untuk foto KTP konsumen.
+- `foto_selfie` (varchar(255)): URL atau path untuk foto selfie konsumen.
 
-### Table Limit
-Tabel "Limit" menyimpan informasi tentang batas kredit dan tenor yang dimiliki oleh konsumen.
-**Table Limit**
-- `ID_Limit` (serial, primary key): ID unik untuk setiap entri limit.
-- `ID_Konsumen` (int, foreign key references Konsumen(ID_Konsumen)): ID konsumen yang terkait.
-- `Tenor` (int): Tenor kredit dalam bulan.
-- `Batas_Kredit` (numeric(12, 2)): Batas kredit yang diberikan kepada konsumen.
+### Table LimitKredit
+Tabel "LimitKredit" menyimpan informasi tentang batas kredit dan tenor yang dimiliki oleh konsumen.
+**Table LimitKredit**
+- `id_limit` (serial, primary key): ID unik untuk setiap entri limit.
+- `id_konsumen` (int, foreign key references Konsumen(ID_Konsumen)): ID konsumen yang terkait.
+- `tenor` (int): Tenor kredit dalam bulan.
+- `batas_kredit` (numeric(12, 2)): Batas kredit yang diberikan kepada konsumen.
 
 ### Table Produk
 Tabel "Produk" menyimpan informasi tentang produk yang tersedia dalam sistem multifinance.
 **Table Produk**
-- `ID_Produk` (serial, primary key): ID unik untuk setiap produk.
-- `Nama_Produk` (varchar(255)): Nama produk yang tersedia dalam sistem.
+- `id_produk` (serial, primary key): ID unik untuk setiap produk.
+- `nama_produk` (varchar(255)): Nama produk yang tersedia dalam sistem.
 
 ### Table Transaksi
 Tabel "Transaksi" menyimpan informasi tentang transaksi yang dilakukan oleh konsumen dalam sistem multifinance.
 **Table Transaksi**
-- `ID_Transaksi` (serial, primary key): ID unik untuk setiap transaksi.
-- `ID_Konsumen` (int, foreign key references Konsumen(ID_Konsumen)): ID konsumen yang terkait.
-- `ID_Produk` (int, foreign key references Produk(ID_Produk)): ID produk yang terkait.
-- `Nomor_Kontrak` (varchar(50)): Nomor kontrak untuk transaksi.
-- `Tanggal_Transaksi` (date): Tanggal transaksi.
-- `OTR` (numeric(12, 2)): Harga kendaraan atau aset lainnya sebelum diskon.
-- `Admin_Fee` (numeric(10, 2)): Biaya administrasi transaksi.
-- `Jumlah_Cicilan` (int): Jumlah cicilan yang akan dilakukan.
-- `Jumlah_Bunga` (numeric(10, 2)): Jumlah bunga yang diterapkan pada transaksi.
-- `Nama_Asset` (varchar(255)): Nama aset atau kendaraan yang dibeli.
-- `Jenis_Transaksi` (varchar(50)): Jenis transaksi yang dilakukan, misalnya "Pembelian" atau "Pembiayaan".
+- `id_transaksi` (serial, primary key): ID unik untuk setiap transaksi.
+- `id_konsumen` (int, foreign key references Konsumen(ID_Konsumen)): ID konsumen yang terkait.
+- `nomor_kontrak` (varchar(50)): Nomor kontrak untuk transaksi.
+- `tanggal_transaksi` (date): Tanggal transaksi.
+- `otr` (numeric(12, 2)): Harga kendaraan atau aset lainnya sebelum diskon.
+- `admin_fee` (numeric(10, 2)): Biaya administrasi transaksi.
+- `jumlah_cicilan` (int): Jumlah cicilan yang akan dilakukan.
+- `jumlah_bunga` (numeric(10, 2)): Jumlah bunga yang diterapkan pada transaksi.
+- `nama_asset` (varchar(255)): Nama aset atau kendaraan yang dibeli.
+- `jenis_transaksi` (varchar(50)): Jenis transaksi yang dilakukan, misalnya "Pembelian" atau "Pembiayaan".
 
 ### Table Detail_Transaksi
 Tabel "Detail_Transaksi" menyimpan informasi detail untuk setiap transaksi yang dilakukan dalam sistem multifinance.
 **Table Detail_Transaksi**
-- `ID_Detail` (serial, primary key): ID unik untuk setiap detail transaksi.
-- `ID_Transaksi` (int, foreign key references Transaksi(ID_Transaksi)): ID transaksi yang terkait.
-- `Jumlah_Beli` (int): Jumlah barang yang dibeli dalam transaksi.
+- `id_detail` (serial, primary key): ID unik untuk setiap detail transaksi.
+- `id_transaksi` (int, foreign key references Transaksi(ID_Transaksi)): ID transaksi yang terkait.
+- `id_produk` (int, foreign key references Produk(ID_Produk)): ID produk yang terkait.
+- `jumlah_beli` (int): Jumlah barang yang dibeli dalam transaksi.
