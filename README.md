@@ -87,18 +87,6 @@ Upload foto KTP dan foto selfie ke Firebase Storage dalam satu request.
 - Endpoint: /api/upload/foto
 - Content-Type: multipart/form-data
 
-**Request Body**
-- foto_ktp (file): Gambar foto KTP.
-- foto_selfie (file): Gambar foto selfie.
-
-**Response**
-- Status Code: 200 OK
-- Response Body: JSON object berisi URL untuk foto KTP dan foto selfie yang berhasil diunggah.
-
-**Error Response**
-- Status Code: 500 Internal Server Error
-- Response Body: JSON object berisi pesan kesalahan jika terjadi error server internal.
-
 **Contoh Request**
 ```
 POST /api/upload/foto
@@ -160,6 +148,45 @@ Membuat user baru.
 {
   "status_code": 201,
   "message": "Berhasil create user",
+}
+```
+
+**Contoh Response (gagal)**
+```json
+{
+  "status_code": 500,
+  "message": "Error"
+}
+```
+### Create Transaction
+
+Membuat transaksi baru.
+
+**Request**
+
+- Method: POST
+- Endpoint: /api/transactions
+- Content-Type: application/json
+
+**Request Body**
+```json
+{
+  "id_konsumen": 1,
+  "nomor_kontrak": "TN12345",
+  "tanggal_transaksi": "2023-07-18",
+  "otr": 10000,
+  "admin_fee": 125,
+  "jumlah_cicilan": 4,
+  "jumlah_bunga": 500,
+  "nama_asset": "Hot wheels",
+  "jenis_transaksi": "Pembelian"
+}
+```
+**Contoh Response (Berhasil)**
+```json
+{
+  "status_code": 201,
+  "message": "Berhasil create transaksi",
 }
 ```
 
