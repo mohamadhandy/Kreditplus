@@ -55,6 +55,7 @@ func (r *authRepository) BeginSession(authRequest models.AuthRequest) chan helpe
 			return
 		}
 		konsumenResponse := models.KonsumenResponse{
+			ID:           konsumen.ID,
 			NIK:          konsumen.NIK,
 			FullName:     konsumen.FullName,
 			LegalName:    konsumen.LegalName,

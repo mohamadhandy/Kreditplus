@@ -11,9 +11,11 @@ import (
 )
 
 type MyCustomClaims struct {
-	Email string `json:"email"`
-	Name  string `json:"name"`
-	Role  string `json:"role"`
+	IDKonsumen int     `json:"id_konsumen"`
+	Email      string  `json:"email"`
+	Name       string  `json:"name"`
+	Role       string  `json:"role"`
+	Gaji       float64 `json:"gaji"`
 	jwt.RegisteredClaims
 }
 

@@ -45,9 +45,11 @@ func (h *authHandler) Login(c *gin.Context) {
 	}
 	konsumenResponse, _ := result.Data.(models.KonsumenResponse)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &middleware.MyCustomClaims{
-		Email: konsumenResponse.Email,
-		Name:  konsumenResponse.FullName,
-		Role:  konsumenResponse.Role,
+		IDKonsumen: konsumenResponse.ID,
+		Email:      konsumenResponse.Email,
+		Name:       konsumenResponse.FullName,
+		Role:       konsumenResponse.Role,
+		Gaji:       konsumenResponse.Gaji,
 	})
 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	if err != nil {

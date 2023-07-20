@@ -30,6 +30,7 @@ type KonsumenRequest struct {
 }
 
 type KonsumenResponse struct {
+	ID           int     `gorm:"column:id_konsumen" json:"id_konsumen"`
 	NIK          string  `json:"nik"`
 	FullName     string  `json:"full_name"`
 	LegalName    string  `json:"legal_name"`
