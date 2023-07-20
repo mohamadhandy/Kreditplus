@@ -16,3 +16,8 @@ func InitVersionOneProductHandler(u usecases.Repositories) ProductHandlerInterfa
 	uc := usecases.GetUseCase(u)
 	return InitProductHandler(uc.ProductUsecase)
 }
+
+func InitVersionOneTransactionHandler(u usecases.Repositories) TransactionHandlerInterface {
+	uc := usecases.GetUseCase(u)
+	return InitTransactionHandler(uc.TransaksiUsecase)
+}

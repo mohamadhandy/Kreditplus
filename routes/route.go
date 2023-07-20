@@ -15,10 +15,13 @@ func RouteAPI(g *gin.Engine, parentCtx context.Context, db *gorm.DB) {
 	konsumen := handlers.InitVersionOneKonsumenHandler(repository)
 	auth := handlers.InitVersionOneAuthHandler(repository)
 	product := handlers.InitVersionOneProductHandler(repository)
+	transaction := handlers.InitVersionOneTransactionHandler(repository)
 
 	g.POST("/api/login", auth.Login)
 
 	g.POST("/api/users", konsumen.CreateUser)
 	g.POST("/api/upload-image", konsumen.UploadImageKonsumen)
 	g.GET("/api/products", middleware.AuthMiddleware(), product.GetProducts)
+
+	g.POST("/api/transactions", middleware.AuthMiddleware(), transaction.CreateTransaction)
 }
