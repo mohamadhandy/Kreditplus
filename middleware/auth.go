@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"fmt"
 	"kredit-plus/helper"
 	"net/http"
@@ -42,19 +43,19 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-func ExtractRoleFromToken(tokenString string) string {
+func ExtractRoleFromToken(tokenString string) (int, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &MyCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SECRET_KEY")), nil
 	})
 	if err != nil {
 		fmt.Println("error extract token name: " + err.Error())
-		return err.Error()
+		return -1, err
 	}
 
 	// Extract the user ID from the token claims
 	if res, ok := token.Claims.(*MyCustomClaims); ok && token.Valid {
-		return res.Role
+		return res.IDKonsumen, nil
 	} else {
-		return "Token Not Valid"
+		return -1, errors.New("token not valid")
 	}
 }

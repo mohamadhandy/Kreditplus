@@ -24,4 +24,5 @@ func RouteAPI(g *gin.Engine, parentCtx context.Context, db *gorm.DB) {
 	g.GET("/api/products", middleware.AuthMiddleware(), product.GetProducts)
 
 	g.POST("/api/transactions", middleware.AuthMiddleware(), transaction.CreateTransaction)
+	g.GET("/api/transactions", middleware.AuthMiddleware(), transaction.GetTransactions)
 }

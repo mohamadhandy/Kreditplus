@@ -8,6 +8,7 @@ import (
 
 type TransaksiUsecaseInterface interface {
 	CreateTransaction(tokenString string, transaksiRequest models.TransaksiRequest) helper.Response
+	GetTransactions(tokenString string) helper.Response
 }
 
 type transaksiUsecase struct {
@@ -20,4 +21,8 @@ func InitTransaksiUsecase(r repositories.TransaksiRepositoryInterface) Transaksi
 
 func (u *transaksiUsecase) CreateTransaction(tokenString string, transaksiRequest models.TransaksiRequest) helper.Response {
 	return <-u.r.CreateTransaction(tokenString, transaksiRequest)
+}
+
+func (u *transaksiUsecase) GetTransactions(tokenString string) helper.Response {
+	return <-u.r.GetTransactions(tokenString)
 }

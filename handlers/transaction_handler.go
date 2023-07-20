@@ -9,6 +9,7 @@ import (
 
 type TransactionHandlerInterface interface {
 	CreateTransaction(c *gin.Context)
+	GetTransactions(c *gin.Context)
 }
 
 type transactionHandler struct {
@@ -24,5 +25,11 @@ func (h *transactionHandler) CreateTransaction(c *gin.Context) {
 	tr := models.TransaksiRequest{}
 	c.BindJSON(&tr)
 	result := h.uc.CreateTransaction(tokenString, tr)
+	c.JSON(result.StatusCode, result)
+}
+
+func (h *transactionHandler) GetTransactions(c *gin.Context) {
+	tokenString := c.GetHeader("Authorization")
+	result := h.uc.GetTransactions(tokenString)
 	c.JSON(result.StatusCode, result)
 }

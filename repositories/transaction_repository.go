@@ -2,13 +2,16 @@ package repositories
 
 import (
 	"kredit-plus/helper"
+	"kredit-plus/middleware"
 	"kredit-plus/models"
+	"net/http"
 
 	"gorm.io/gorm"
 )
 
 type TransaksiRepositoryInterface interface {
 	CreateTransaction(tokenString string, tr models.TransaksiRequest) chan helper.Response
+	GetTransactions(tokenString string) chan helper.Response
 }
 
 type transaksiRepository struct {
@@ -22,7 +25,94 @@ func InitTransaksiRepository(db *gorm.DB) TransaksiRepositoryInterface {
 func (r *transaksiRepository) CreateTransaction(tokenString string, tr models.TransaksiRequest) chan helper.Response {
 	result := make(chan helper.Response)
 	go func() {
+		tx := r.db.Begin()
+		defer func() {
+			if r := recover(); r != nil {
+				tx.Rollback()
+				result <- helper.Response{
+					Data:       nil,
+					Message:    "An unexpected error occured",
+					StatusCode: http.StatusInternalServerError,
+				}
+			}
+		}()
+		newTransaction := models.Transaksi{
+			JenisTransaksi: tr.JenisTransaksi,
+			OTR:            tr.OTR,
+			IDKonsumen:     tr.IDKonsumen,
+			JumlahBunga:    helper.HitungJumlahBunga(tr.OTR, 6),
+			AdminFee:       helper.HitungAdminFee(helper.HitungAdminFee(tr.OTR)),
+			JumlahCicilan:  tr.JumlahCicilan,
+			NamaAsset:      tr.NamaAsset,
+			NomorKontrak:   helper.GenerateNomorKontrak(tr.JenisTransaksi, tr.IDKonsumen, tr.JumlahCicilan),
+		}
+		err := tx.Transaction(func(_ *gorm.DB) error {
+			if err := r.db.Create(&newTransaction).Error; err != nil {
+				return err
+			}
 
+			// Membuat data detail transaksi
+			for _, dt := range tr.DetailTransaksi {
+				newDetailTransaksi := models.DetailTransaksi{
+					IDTransaksi: newTransaction.ID,
+					IDProduk:    dt.IDProduk,
+					JumlahBeli:  dt.JumlahBeli,
+				}
+				if err := r.db.Create(&newDetailTransaksi).Error; err != nil {
+					return err
+				}
+			}
+
+			return nil
+		})
+		if err != nil {
+			tx.Rollback()
+			result <- helper.Response{
+				Data:       nil,
+				StatusCode: http.StatusInternalServerError,
+				Message:    err.Error(),
+			}
+			return
+		}
+
+		// Commit transaksi jika semuanya berhasil
+		tx.Commit()
+
+		result <- helper.Response{
+			Data:       newTransaction,
+			StatusCode: http.StatusCreated,
+			Message:    "Success Create Transaction",
+		}
+	}()
+	return result
+}
+
+func (r *transaksiRepository) GetTransactions(tokenString string) chan helper.Response {
+	result := make(chan helper.Response)
+	go func() {
+		transactions := []models.Transaksi{}
+		idKonsumen, errToken := middleware.ExtractRoleFromToken(tokenString)
+		if errToken != nil {
+			result <- helper.Response{
+				Data:       nil,
+				StatusCode: http.StatusInternalServerError,
+				Message:    errToken.Error(),
+			}
+			return
+		}
+		if err := r.db.Where("id_konsumen = ?", idKonsumen).Find(&transactions).Error; err != nil {
+			result <- helper.Response{
+				Data:       nil,
+				StatusCode: http.StatusInternalServerError,
+				Message:    err.Error(),
+			}
+			return
+		}
+		result <- helper.Response{
+			Data:       transactions,
+			Message:    "Success Get Transactions",
+			StatusCode: http.StatusOK,
+		}
 	}()
 	return result
 }

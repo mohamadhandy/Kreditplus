@@ -27,5 +27,10 @@ type TransaksiRequest struct {
 	OTR             float64           `json:"otr"`
 	JumlahCicilan   int               `json:"jumlah_cicilan"`
 	NamaAsset       string            `json:"nama_asset"`
+	JenisTransaksi  string            `json:"jenis_transaksi"`
 	DetailTransaksi []DetailTransaksi `json:"detail_transaksi"`
+}
+
+func (Transaksi) TableName() string {
+	return "Transaksi"
 }
