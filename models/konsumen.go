@@ -29,6 +29,19 @@ type KonsumenRequest struct {
 	Password     string  `json:"password"`
 }
 
+type KonsumenResponse struct {
+	NIK          string  `json:"nik"`
+	FullName     string  `json:"full_name"`
+	LegalName    string  `json:"legal_name"`
+	Gaji         float64 `json:"gaji"`
+	TempatLahir  string  `json:"tempat_lahir"`
+	TanggalLahir string  `json:"tanggal_lahir"`
+	FotoKTP      string  `json:"foto_ktp"`
+	FotoSelfie   string  `json:"foto_selfie"`
+	Role         string  `json:"role"`
+	Email        string  `json:"email"`
+}
+
 func (Konsumen) TableName() string {
 	return "Konsumen"
 }

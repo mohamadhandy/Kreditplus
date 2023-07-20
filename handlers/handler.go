@@ -6,3 +6,8 @@ func InitVersionOneKonsumenHandler(u usecases.Repositories) KonsumenHandlerInter
 	uc := usecases.GetUseCase(u)
 	return InitKonsumenHandler(uc.KonsumenUsecase)
 }
+
+func InitVersionOneAuthHandler(u usecases.Repositories) AuthenticationHandlerInterface {
+	uc := usecases.GetUseCase(u)
+	return InitAuthenticationHandler(uc.AuthUsecase)
+}
