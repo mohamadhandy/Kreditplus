@@ -46,6 +46,19 @@ func (r *konsumenRepository) CreateKonsumen(konsumen models.KonsumenRequest) cha
 			}
 			return
 		}
+		limitKredit := models.LimitKredit{
+			IDKonsumen:  modelKonsumen.ID,
+			Tenor:       4,
+			BatasKredit: helper.CalculateBatasKredit(modelKonsumen.Gaji),
+		}
+		if err := r.db.Create(&limitKredit).Error; err != nil {
+			result <- helper.Response{
+				Data:       nil,
+				StatusCode: http.StatusInternalServerError,
+				Message:    err.Error(),
+			}
+			return
+		}
 		result <- helper.Response{
 			StatusCode: http.StatusCreated,
 			Message:    "Register User Success",
