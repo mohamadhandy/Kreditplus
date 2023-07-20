@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"kredit-plus/helper"
 	"kredit-plus/middleware"
 	"kredit-plus/models"
 	"kredit-plus/usecases"
@@ -36,7 +37,11 @@ func (h *authHandler) Login(c *gin.Context) {
 	// kalau error ganti ke pointer
 	result := h.auth.BeginSession(reqModel)
 	if result.StatusCode != 200 {
-		c.JSON(result.StatusCode, result)
+		c.JSON(result.StatusCode, helper.Response{
+			StatusCode: result.StatusCode,
+			Message:    result.Message,
+			Data:       nil,
+		})
 	}
 	konsumenResponse, _ := result.Data.(models.KonsumenResponse)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &middleware.MyCustomClaims{
@@ -47,8 +52,16 @@ func (h *authHandler) Login(c *gin.Context) {
 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	if err != nil {
 		log.Fatal(err)
-		c.JSON(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, helper.Response{
+			StatusCode: http.StatusUnprocessableEntity,
+			Message:    err.Error(),
+			Data:       nil,
+		})
 		return
 	}
-	c.JSON(http.StatusOK, tokenString)
+	c.JSON(http.StatusOK, helper.Response{
+		StatusCode: http.StatusOK,
+		Message:    "Login Success",
+		Data:       tokenString,
+	})
 }
