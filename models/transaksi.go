@@ -16,7 +16,7 @@ type Transaksi struct {
 }
 
 type DetailTransaksi struct {
-	IDDetail    int `gorm:"column:id_detail" json:"id_detail"`
+	IDDetail    int `gorm:"column:id_detail;primarykey" json:"id_detail"`
 	IDTransaksi int `gorm:"column:id_transaksi" json:"id_transaksi"`
 	IDProduk    int `gorm:"column:id_produk" json:"id_produk"`
 	JumlahBeli  int `gorm:"column:jumlah_beli" json:"jumlah_beli"`
@@ -33,4 +33,8 @@ type TransaksiRequest struct {
 
 func (Transaksi) TableName() string {
 	return "Transaksi"
+}
+
+func (DetailTransaksi) TableName() string {
+	return "DetailTransaksi"
 }

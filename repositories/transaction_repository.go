@@ -5,6 +5,7 @@ import (
 	"kredit-plus/middleware"
 	"kredit-plus/models"
 	"net/http"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -31,41 +32,24 @@ func (r *transaksiRepository) CreateTransaction(tokenString string, tr models.Tr
 				tx.Rollback()
 				result <- helper.Response{
 					Data:       nil,
-					Message:    "An unexpected error occured",
+					Message:    "An unexpected error occurred",
 					StatusCode: http.StatusInternalServerError,
 				}
 			}
 		}()
 		newTransaction := models.Transaksi{
-			JenisTransaksi: tr.JenisTransaksi,
-			OTR:            tr.OTR,
-			IDKonsumen:     tr.IDKonsumen,
-			JumlahBunga:    helper.HitungJumlahBunga(tr.OTR, 6),
-			AdminFee:       helper.HitungAdminFee(helper.HitungAdminFee(tr.OTR)),
-			JumlahCicilan:  tr.JumlahCicilan,
-			NamaAsset:      tr.NamaAsset,
-			NomorKontrak:   helper.GenerateNomorKontrak(tr.JenisTransaksi, tr.IDKonsumen, tr.JumlahCicilan),
+			JenisTransaksi:   tr.JenisTransaksi,
+			OTR:              tr.OTR,
+			IDKonsumen:       tr.IDKonsumen,
+			JumlahBunga:      helper.HitungJumlahBunga(tr.OTR, 6),
+			AdminFee:         helper.HitungAdminFee(tr.OTR),
+			TanggalTransaksi: time.Now(),
+			JumlahCicilan:    tr.JumlahCicilan,
+			NamaAsset:        tr.NamaAsset,
+			NomorKontrak:     helper.GenerateNomorKontrak(tr.JenisTransaksi, tr.IDKonsumen, tr.JumlahCicilan),
 		}
-		err := tx.Transaction(func(_ *gorm.DB) error {
-			if err := r.db.Create(&newTransaction).Error; err != nil {
-				return err
-			}
 
-			// Membuat data detail transaksi
-			for _, dt := range tr.DetailTransaksi {
-				newDetailTransaksi := models.DetailTransaksi{
-					IDTransaksi: newTransaction.ID,
-					IDProduk:    dt.IDProduk,
-					JumlahBeli:  dt.JumlahBeli,
-				}
-				if err := r.db.Create(&newDetailTransaksi).Error; err != nil {
-					return err
-				}
-			}
-
-			return nil
-		})
-		if err != nil {
+		if err := tx.Create(&newTransaction).Error; err != nil {
 			tx.Rollback()
 			result <- helper.Response{
 				Data:       nil,
@@ -73,6 +57,27 @@ func (r *transaksiRepository) CreateTransaction(tokenString string, tr models.Tr
 				Message:    err.Error(),
 			}
 			return
+		}
+
+		// Membuat data detail transaksi
+		for _, dt := range tr.DetailTransaksi {
+			newDetailTransaksi := models.DetailTransaksi{
+				IDProduk:   dt.IDProduk,
+				JumlahBeli: dt.JumlahBeli,
+			}
+			if newTransaction.ID > 0 {
+				newDetailTransaksi.IDTransaksi = newTransaction.ID
+			}
+
+			if err := tx.Debug().Create(&newDetailTransaksi).Error; err != nil {
+				tx.Rollback()
+				result <- helper.Response{
+					Data:       nil,
+					StatusCode: http.StatusInternalServerError,
+					Message:    err.Error(),
+				}
+				return
+			}
 		}
 
 		// Commit transaksi jika semuanya berhasil
