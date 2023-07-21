@@ -30,7 +30,6 @@ func (r *authRepository) BeginSession(authRequest models.AuthRequest) chan helpe
 		email, password := authRequest.Email, authRequest.Password
 		err := r.db.Where(&models.Konsumen{Email: email}).First(&konsumen).Error
 		if err == gorm.ErrRecordNotFound {
-			// isi data nanti
 			result <- helper.Response{
 				Data:       nil,
 				Message:    err.Error(),
@@ -38,7 +37,6 @@ func (r *authRepository) BeginSession(authRequest models.AuthRequest) chan helpe
 			}
 			return
 		} else if err != nil {
-			// isi data nanti
 			result <- helper.Response{
 				Data:       nil,
 				Message:    err.Error(),
@@ -46,10 +44,10 @@ func (r *authRepository) BeginSession(authRequest models.AuthRequest) chan helpe
 			}
 			return
 		}
-		if err := bcrypt.CompareHashAndPassword([]byte(konsumen.Password), []byte(password)); err != nil {
+		if errPassword := bcrypt.CompareHashAndPassword([]byte(konsumen.Password), []byte(password)); errPassword != nil {
 			result <- helper.Response{
 				Data:       nil,
-				Message:    err.Error(),
+				Message:    errPassword.Error(),
 				StatusCode: http.StatusInternalServerError,
 			}
 			return

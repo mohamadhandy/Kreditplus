@@ -42,6 +42,7 @@ func (h *authHandler) Login(c *gin.Context) {
 			Message:    result.Message,
 			Data:       nil,
 		})
+		return
 	}
 	konsumenResponse, _ := result.Data.(models.KonsumenResponse)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &middleware.MyCustomClaims{
