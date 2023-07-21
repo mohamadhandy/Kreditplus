@@ -19,7 +19,7 @@ Berikut merupakan gambar dari general architecture untuk technical test Kredit P
 
 Dengan memisahkan `API upload` dan `API create user` tujuannya adalah `separation of concern` sehingga memudahkan developer mengembangkan masing-masing API secara scalable.
 ## Gambaran Umum ERD
-![ERD](https://firebasestorage.googleapis.com/v0/b/crwn-db-6edbc.appspot.com/o/KP%20(3).png?alt=media&token=2c26782a-c5de-4e30-9d04-c775a43dd6c6)
+![ERD](https://firebasestorage.googleapis.com/v0/b/crwn-db-6edbc.appspot.com/o/KP%20(4).png?alt=media&token=33d6199d-34d3-419a-a398-70d723c92ab7)
 
 ### Table Konsumen
 Tabel "Konsumen" menyimpan informasi tentang konsumen yang terdaftar dalam sistem multifinance.
@@ -66,9 +66,9 @@ Tabel "Transaksi" menyimpan informasi tentang transaksi yang dilakukan oleh kons
 - `nama_asset` (varchar(255)): Nama aset atau kendaraan yang dibeli.
 - `jenis_transaksi` (varchar(50)): Jenis transaksi yang dilakukan, misalnya "Pembelian" atau "Pembiayaan".
 
-### Table Detail_Transaksi
+### Table DetailTransaksi
 Tabel "Detail_Transaksi" menyimpan informasi detail untuk setiap transaksi yang dilakukan dalam sistem multifinance.
-**Table Detail_Transaksi**
+**Table DetailTransaksi**
 - `id_detail` (serial, primary key): ID unik untuk setiap detail transaksi.
 - `id_transaksi` (int, foreign key references Transaksi(ID_Transaksi)): ID transaksi yang terkait.
 - `id_produk` (int, foreign key references Produk(ID_Produk)): ID produk yang terkait.
@@ -76,6 +76,41 @@ Tabel "Detail_Transaksi" menyimpan informasi detail untuk setiap transaksi yang 
 
 ## API Specification
 Berikut contoh API specification dari technical test ini beserta contoh request dan responsenya.
+
+### API Login
+
+Login email dan password.
+
+**Request**
+
+- Method: POST
+- Endpoint: /api/login
+- Content-Type: application/json
+
+**Contoh Request**
+```
+POST /api/login
+Content-Type: application/json
+
+```
+
+**Contoh Response (Berhasil)**
+```json
+{
+  "status_code": 200,
+  "message": "Login Success",
+  "data": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9rb25zdW1lbiI6MSwiZW1haWwiOiJhbGFuc21pdGhAZXhhbXBsZS5jb20iLCJuYW1lIjoiQWxhbiBTbWl0aCIsInJvbGUiOiJ1c2VyIiwiZ2FqaSI6MTAwMDAwMDB9.9iHI6bUVHbvJzcnThKdNv6Bbhc6R5JWy0MMFRptlpyI"
+}
+```
+
+**Contoh Response (gagal)**
+```json
+{
+  "status_code": 500,
+  "message": "crypto/bcrypt: hashedPassword is not the hash of the given password",
+  "data": null
+}
+```
 
 ### API Upload foto
 
@@ -148,6 +183,7 @@ Membuat user baru.
 {
   "status_code": 201,
   "message": "Berhasil create user",
+  "data": null
 }
 ```
 
@@ -155,9 +191,101 @@ Membuat user baru.
 ```json
 {
   "status_code": 500,
-  "message": "Error"
+  "message": "Error",
+  "data": null
 }
 ```
+### GetProducts
+
+GetProducts
+
+**Request**
+
+- Method: GET
+- Endpoint: /api/products
+- Content-Type: application/json
+
+
+
+**Contoh Response (Berhasil)**
+```json
+{
+  "status_code": 200,
+  "message": "Get Products success",
+  "data": [
+    {
+      "nama_produk": "Laptop"
+    },
+    {
+      "nama_produk": "Smartphone"
+    },
+    {
+      "nama_produk": "TV"
+    },
+    {
+      "nama_produk": "Kulkas"
+    },
+    {
+      "nama_produk": "Motor"
+    },
+    {
+      "nama_produk": "Mobil"
+    }
+  ]
+}
+```
+
+**Contoh Response (gagal)**
+```json
+{
+  "status_code": 422,
+  "message": "token is malformed: could not JSON decode header: invalid character '\\'' after object key:value pair",
+  "data": null
+}
+```
+
+### GetTransactions
+
+GetTransactions get semua transaksi berdasarkan konsumen id
+
+**Request**
+
+- Method: GET
+- Endpoint: /api/products
+- Content-Type: application/json
+
+
+**Contoh Response (Berhasil)**
+```json
+{
+  "status_code": 200,
+  "message": "Success Get Transactions",
+  "data": [
+    {
+      "id_transaksi": 1,
+      "id_konsumen": 1,
+      "nomor_kontrak": "PB14",
+      "tanggal_transaksi": "2023-07-21T00:00:00Z",
+      "otr": 14000000,
+      "admin_fee": 700000,
+      "jumlah_cicilan": 4,
+      "jumlah_bunga": 840000,
+      "nama_asset": "Beli gadget",
+      "jenis_transaksi": "Pembelian"
+    }
+  ]
+}
+```
+
+**Contoh Response (gagal)**
+```json
+{
+  "status_code": 422,
+  "message": "token is malformed: could not JSON decode header: invalid character '\\'' after object key:value pair",
+  "data": null
+}
+```
+
 ### Create Transaction
 
 Membuat transaksi baru.
@@ -171,29 +299,114 @@ Membuat transaksi baru.
 **Request Body**
 ```json
 {
-  "id_konsumen": 1,
-  "nomor_kontrak": "TN12345",
-  "tanggal_transaksi": "2023-07-18",
-  "otr": 10000,
-  "admin_fee": 125,
+  "id_konsumen": 2,
+  "otr": 19000000,
   "jumlah_cicilan": 4,
-  "jumlah_bunga": 500,
-  "nama_asset": "Hot wheels",
-  "jenis_transaksi": "Pembelian"
+  "nama_asset": "Honda Beat",
+  "jenis_transaksi": "Pembelian",
+  "detail_transaksi": [
+    {
+      "id_produk": 5,
+      "jumlah_beli": 1
+    }
+  ]
 }
 ```
 **Contoh Response (Berhasil)**
 ```json
 {
   "status_code": 201,
-  "message": "Berhasil create transaksi",
+  "message": "Success Create Transaction",
+  "data": {
+    "id_transaksi": 8,
+    "id_konsumen": 2,
+    "nomor_kontrak": "PB24",
+    "tanggal_transaksi": "2023-07-21T10:39:53.874422+07:00",
+    "otr": 19000000,
+    "admin_fee": 950000,
+    "jumlah_cicilan": 4,
+    "jumlah_bunga": 1140000,
+    "nama_asset": "Honda Scoopy",
+    "jenis_transaksi": "Pembelian"
+  }
 }
 ```
 
 **Contoh Response (gagal)**
 ```json
 {
-  "status_code": 500,
-  "message": "Error"
+  "status_code": 422,
+  "message": "token is malformed: could not JSON decode header: invalid character '\\'' after object key:value pair",
+  "data": null
 }
 ```
+
+## SetupDB
+Berikut query untuk membuat table di postgres. 
+```sql
+-- Membuat tabel Konsumen
+CREATE TABLE public."Konsumen" (
+    id_konsumen SERIAL PRIMARY KEY,
+    nik VARCHAR(20),
+    full_name VARCHAR(255),
+    legal_name VARCHAR(255),
+    gaji NUMERIC(10, 2),
+    tempat_lahir VARCHAR(255),
+    tanggal_lahir DATE,
+    foto_ktp VARCHAR(255),
+    foto_selfie VARCHAR(255),
+    role VARCHAR(50),
+    email VARCHAR(255),
+    password VARCHAR(255)
+);
+
+-- Membuat tabel LimitKredit
+CREATE TABLE public."LimitKredit" (
+    id_limit SERIAL PRIMARY KEY,
+    id_konsumen INT REFERENCES "Konsumen"(id_konsumen),
+    tenor INT,
+    batas_kredit NUMERIC(12, 2)
+);
+
+-- Membuat tabel Transaksi
+CREATE TABLE public."Transaksi" (
+    id_transaksi SERIAL PRIMARY KEY,
+    id_konsumen INT REFERENCES "Konsumen"(id_konsumen),
+    nomor_kontrak VARCHAR(50),
+    tanggal_transaksi DATE,
+    otr NUMERIC(12, 2),
+    admin_fee NUMERIC(10, 2),
+    jumlah_cicilan INT,
+    jumlah_bunga NUMERIC(10, 2),
+    nama_asset VARCHAR(255),
+    jenis_transaksi VARCHAR(50)
+);
+
+-- Membuat tabel Produk
+CREATE TABLE public."Produk" (
+    id_produk SERIAL PRIMARY KEY,
+    nama_produk VARCHAR(255)
+);
+
+-- Membuat tabel Detail_Transaksi
+CREATE TABLE public."DetailTransaksi" (
+    id_detail SERIAL PRIMARY KEY,
+    id_transaksi INT REFERENCES "Transaksi"(id_transaksi),
+    id_produk INT REFERENCES "Produk"(id_produk),
+    jumlah_beli INT
+);
+
+
+
+INSERT INTO "Produk" (nama_produk) VALUES
+('Laptop'),
+('Smartphone'),
+('TV'),
+('Kulkas'),
+('Motor'),
+('Mobil');
+
+```
+
+## Running Project
+Untuk running project saya menggunakan `fresh`. Buka terminal pada project kredit-plus kemudian ketik `fresh`
