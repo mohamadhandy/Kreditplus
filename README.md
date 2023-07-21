@@ -410,3 +410,35 @@ INSERT INTO "Produk" (nama_produk) VALUES
 
 ## Running Project
 Untuk running project saya menggunakan `fresh`. Buka terminal pada project kredit-plus kemudian ketik `fresh`
+
+## .env & kredit-plus.json
+Contoh .env yang dipakai disini:
+```
+DB_USER=
+DB_PASSWORD=
+DB_ADDRESS=
+DB_PORT=
+DB_NAME=
+SECRET_KEY=
+FIREBASE_BUCKET=
+FIREBASE_SERVICE_JSON=
+```
+value dari `FIREBASE_BUCKET`, `FIREBASE_SERVICE_JSON` & field yang lainnya silahkan disesuaikan.
+
+Contoh kredit-plus.json file tersebut dari setting firebase:
+```
+{
+  "type": "service_account",
+  "project_id": "",
+  "private_key_id": "",
+  "private_key": "-----BEGIN PRIVATE KEY-----\contoh private key disiniI\n-----END PRIVATE KEY-----\n",
+  "client_email": "",
+  "client_id": "",
+  "auth_uri": "",
+  "token_uri": "",
+  "auth_provider_x509_cert_url": "",
+  "client_x509_cert_url": "",
+  "universe_domain": "googleapis.com"
+}
+```
+untuk semua field diatas harus di generate dari firebasenya.
